@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Components / Cards - NiceAdmin Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title" style="font-size: 4em; text-align: center; flex: 1 1 auto;" id="parentCardTitle"><%= parent.parentCardTitle %></h2>
+                <p class="card-text" style="text-align: right; margin-left: auto;">
+                    <a href="#" class="ri-edit-line" style="font-size: 4em;"></a>
+                </p>
+            </div>
+        </div>
+
+        <!-- End Page Title -->
+
+        <section class="section">
+            <div class="row align-items-top">
+                <% parent.ChildCardArray.forEach((childCard, childIndex) => { %>
+                <div class="col-lg-3 mb-4"> <!-- Adjusted column size to fit 4 cards in a row -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h5 class="card-title" style="text-align: center; flex: 1 1 auto;"><%= childCard.childCardTitle %></h5>
+                                <p class="card-text" style="text-align: right; margin-left: auto;">
+                                    <a href="#" class=" ri-edit-line " style="font-size: 2em;"></a>
+                                </p>
+                            </div>
+
+                            <ul class="list-group">
+                                <% childCard.grandchildren.forEach((grandchild, grandchildIndex) => { %>
+                               <!-- Inside the grandchild list item -->
+                               <li class="list-group-item" onclick="sendGrandchildId('<%= grandchild.grandchildID %>')" data-grandchild-id="<%= grandchild.grandchildID %>"
+                                style="cursor: pointer; transition: background-color 0.3s ease;"
+                                onmouseover="this.style.backgroundColor='#f0f0f0';"
+                                onmouseout="this.style.backgroundColor='inherit';">
+                                <input type="checkbox" id="checkbox<%= childIndex + 1 %>-<%= grandchildIndex + 1 %>" onclick="toggleCheckbox(this)">
+                                <span><%= grandchild.grandchildTitle %></span>
+                            </li>
+                            
+
+                                <% }); %>
+                            </ul>
+
+                            <p class="card-text" style="text-align: center;">
+                                <a href="#" class="ri-add-circle-line" style="font-size: 2em; width: 50px; display: inline-block;" 
+                                data-bs-toggle="modal" data-bs-target="#taskModal" 
+                                data-parentcardid="<%= parent.parentCardID %>" 
+                                data-childcardid="<%= childCard.childCardID %>"></a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+
+        <!-- Task Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Enter Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form with IDs for accessing inputs -->
+                <form id="taskForm" class="row g-3">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" id="taskInput" placeholder="Task">
+                        <input type="hidden" id="parentCardIdInput"> <!-- Hidden input for parent card ID -->
+                        <input type="hidden" id="childCardIdInput"> <!-- Hidden input for child card ID -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="saveTaskBtn" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Card Modal -->
+        <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cardModalLabel">Enter Card Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form with IDs for accessing inputs -->
+                        <form id="cardForm" class="row g-3">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="cardTitleInput" placeholder="Card Title">
+                                <input type="hidden" id="parentCardIdInput"> <!-- Hidden input for parent card ID -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="saveCardBtn" class="btn btn-primary">Save Card</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trigger Button for Add Card Modal -->
+        <p class="card-text" style="text-align: center;">
+            <a href="#" class="ri-file-add-fill" style="font-size: 4em; width: 100px; display: inline-block;" data-bs-toggle="modal" data-bs-target="#cardModal" data-parentcardid="<%= parent.parentCardID %>"></a>
+        </p>
+
+    </main><!-- End #main -->
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script>
+        function toggleCheckbox(checkbox) {
+            checkbox.nextElementSibling.classList.toggle('strikethrough', checkbox.checked);
+        }
+
+        // Function to set card title when modal opens
+            // Function to set parentCardID and childCardID when task modal opens
+          $('#taskModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var parentCardId = button.data('parentcardid'); // Get parentCardID from data attribute
+            var childCardId = button.data('childcardid'); // Get childCardID from data attribute
+            $('#parentCardIdInput').val(parentCardId); // Set hidden input for parent card ID
+            $('#childCardIdInput').val(childCardId); // Set hidden input for child card ID
+          });
+
+
+        $('#cardModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var parentCardId = button.data('parentcardid'); // Get parentCardID from data attribute
+            $('#parentCardIdInput').val(parentCardId); // Set hidden input for parent card ID
+        });
+
+        // Function to handle form submission for saving a task
+       // Function to handle form submission for saving a task
+$('#saveTaskBtn').click(function () {
+    var task = $('#taskInput').val(); // Get task input value
+    var parentCardId = $('#parentCardIdInput').val(); // Get parent card ID from hidden input
+    var childCardId = $('#childCardIdInput').val(); // Get child card ID from hidden input
+
+    // Simulate API request
+    var requestData = {
+        task: task,
+        parentCardId: parentCardId,
+        childCardId: childCardId // Include child card ID in the request data
+    };
+    console.log('Sending task data:', requestData);
+
+    // Assuming AJAX POST request to send data to server
+    $.ajax({
+        type: 'POST',
+        url: '/api/frontend/submitTask',
+        data: JSON.stringify(requestData),
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('Task saved successfully:', response);
+            // Handle success response
+        },
+        error: function(error) {
+            console.error('Error saving task:', error);
+            // Handle error response
+        }
+    });
+
+    $('#taskModal').modal('hide'); // Hide modal after submission
+});
+
+
+        // Function to handle form submission for saving a card
+        $('#saveCardBtn').click(function () {
+            var cardTitle = $('#cardTitleInput').val(); // Get card title input value
+            var parentCardId = $('#parentCardIdInput').val(); // Get parent card ID from hidden input
+
+            // Simulate API request
+            var requestData = {
+                cardTitle: cardTitle,
+                parentCardId: parentCardId
+            };
+            console.log('Sending card data:', requestData);
+
+            // Assuming AJAX POST request to send data to server
+            $.ajax({
+                type: 'POST',
+                url: '/api/frontend/submitCard',
+                data: JSON.stringify(requestData),
+                contentType: 'application/json',
+                success: function(response) {
+                    console.log('Card saved successfully:', response);
+                    // Handle success response
+                },
+                error: function(error) {
+                    console.error('Error saving card:', error);
+                    // Handle error response
+                }
+            });
+
+            $('#cardModal').modal('hide'); // Hide modal after submission
+        });
+
+
+
+        // Function to send grandchild ID to another API
+function sendGrandchildId(grandchildId) {
+    console.log('Sending grandchild ID:', grandchildId);
+
+    // Assuming AJAX POST request to send grandchild ID to another API
+    $.ajax({
+        type: 'POST',
+        url: '/api/frontend/get-card',
+        data: JSON.stringify({ grandchildId: grandchildId }),
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('Grandchild ID sent successfully:', response);
+            // Handle success response
+        },
+        error: function(error) {
+            console.error('Error sending grandchild ID:', error);
+            // Handle error response
+        }
+    });
+}
+
+
+    </script>
+</body>
+
+</html>
